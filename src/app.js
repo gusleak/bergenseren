@@ -3,8 +3,15 @@ class App extends React.Component {
         super(props);
         this.state = { 
             theme: 'light-theme',
-            themeChecked: false
+            themeChecked: false,
+            weatherData: ''
         };
+    }
+
+    componentDidMount() {
+        fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3913&lon=5.3221')
+            .then(res => res.json())
+            .then(json => this.setState({ weatherData: json.properties.timeseries }))
     }
 
     render() {
@@ -17,7 +24,7 @@ class App extends React.Component {
                     <input type='checkbox' id='slider' checked={this.state.themeChecked} readOnly></input>
                     <span className='slider round'></span>
                 </div>
-                <h1>Bergenseren</h1>
+                <h1 id='title'>Bergenseren</h1>
             </div>
         );
     }

@@ -16,15 +16,27 @@ var App = function (_React$Component) {
 
         _this.state = {
             theme: 'light-theme',
-            themeChecked: false
+            themeChecked: false,
+            weatherData: ''
         };
         return _this;
     }
 
     _createClass(App, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var _this2 = this;
+
+            fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3913&lon=5.3221').then(function (res) {
+                return res.json();
+            }).then(function (json) {
+                return _this2.setState({ weatherData: json.properties.timeseries });
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             return React.createElement(
                 'div',
@@ -32,14 +44,14 @@ var App = function (_React$Component) {
                 React.createElement(
                     'div',
                     { id: 'theme-switch', className: 'switch', onClick: function onClick() {
-                            _this2.state.theme === 'light-theme' ? _this2.setState({ theme: 'dark-theme', themeChecked: true }) : _this2.setState({ theme: 'light-theme', themeChecked: false });
+                            _this3.state.theme === 'light-theme' ? _this3.setState({ theme: 'dark-theme', themeChecked: true }) : _this3.setState({ theme: 'light-theme', themeChecked: false });
                         } },
                     React.createElement('input', { type: 'checkbox', id: 'slider', checked: this.state.themeChecked, readOnly: true }),
                     React.createElement('span', { className: 'slider round' })
                 ),
                 React.createElement(
                     'h1',
-                    null,
+                    { id: 'title' },
                     'Bergenseren'
                 )
             );
