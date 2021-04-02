@@ -17,8 +17,10 @@ var App = function (_React$Component) {
         _this.state = {
             theme: 'light-theme',
             themeChecked: false,
-            currentTemp: '',
-            weatherData: ''
+            weatherData: '',
+            tempToday: '',
+            tempTomorrow: '',
+            tempDayAfter: ''
         };
         return _this;
     }
@@ -32,7 +34,9 @@ var App = function (_React$Component) {
                 return res.json();
             }).then(function (json) {
                 return _this2.setState({
-                    currentTemp: json.properties.timeseries[0].data.instant.details.air_temperature,
+                    tempToday: [getTemp('min', 0, json.properties.timeseries), getTemp('max', 0, json.properties.timeseries)],
+                    tempTomorrow: [getTemp('min', 1, json.properties.timeseries), getTemp('max', 1, json.properties.timeseries)],
+                    tempDayAfter: [getTemp('min', 2, json.properties.timeseries), getTemp('max', 2, json.properties.timeseries)],
                     weatherData: json.properties.timeseries
                 });
             });
@@ -53,14 +57,10 @@ var App = function (_React$Component) {
                     React.createElement('input', { type: 'checkbox', id: 'slider', checked: this.state.themeChecked, readOnly: true }),
                     React.createElement('span', { className: 'slider round' })
                 ),
-                React.createElement(
-                    'h1',
-                    { id: 'title' },
-                    'Bergenseren'
-                ),
+                React.createElement(NavBar, null),
                 React.createElement(
                     'table',
-                    { id: 'weather-table', className: 'table table-sm' },
+                    { id: 'weather-table', className: 'table' },
                     React.createElement(
                         'thead',
                         null,
@@ -70,7 +70,7 @@ var App = function (_React$Component) {
                             React.createElement(
                                 'th',
                                 null,
-                                React.createElement('i', { 'class': 'fas fa-calendar-day' })
+                                React.createElement('i', { className: 'fas fa-calendar-day' })
                             ),
                             React.createElement(
                                 'th',
@@ -80,31 +80,75 @@ var App = function (_React$Component) {
                             React.createElement(
                                 'th',
                                 null,
-                                React.createElement('i', { 'class': 'fas fa-wind' })
+                                React.createElement('i', { className: 'fas fa-wind' })
                             ),
                             React.createElement(
                                 'th',
                                 null,
-                                React.createElement('i', { 'class': 'fas fa-umbrella' })
+                                React.createElement('i', { className: 'fas fa-umbrella' })
                             )
                         )
                     ),
                     React.createElement(
-                        'tr',
+                        'tbody',
                         null,
                         React.createElement(
-                            'td',
+                            'tr',
                             null,
-                            'Today'
+                            React.createElement(
+                                'td',
+                                null,
+                                'Today'
+                            ),
+                            React.createElement(
+                                'td',
+                                null,
+                                this.state.tempToday[0],
+                                ' \u2103 til ',
+                                this.state.tempToday[1],
+                                ' \u2103'
+                            ),
+                            React.createElement('td', null),
+                            React.createElement('td', null)
                         ),
                         React.createElement(
-                            'td',
+                            'tr',
                             null,
-                            this.state.currentTemp,
-                            ' \u2103'
+                            React.createElement(
+                                'td',
+                                null,
+                                'Tomorrow'
+                            ),
+                            React.createElement(
+                                'td',
+                                null,
+                                this.state.tempTomorrow[0],
+                                ' \u2103 til ',
+                                this.state.tempTomorrow[1],
+                                ' \u2103'
+                            ),
+                            React.createElement('td', null),
+                            React.createElement('td', null)
                         ),
-                        React.createElement('td', null),
-                        React.createElement('td', null)
+                        React.createElement(
+                            'tr',
+                            null,
+                            React.createElement(
+                                'td',
+                                null,
+                                'Day After'
+                            ),
+                            React.createElement(
+                                'td',
+                                null,
+                                this.state.tempDayAfter[0],
+                                ' \u2103 til ',
+                                this.state.tempDayAfter[1],
+                                ' \u2103'
+                            ),
+                            React.createElement('td', null),
+                            React.createElement('td', null)
+                        )
                     )
                 )
             );
@@ -113,6 +157,47 @@ var App = function (_React$Component) {
 
     return App;
 }(React.Component);
+
+function NavBar() {
+    return React.createElement(
+        'ul',
+        { className: 'nav justify-content-center' },
+        React.createElement(
+            'li',
+            { className: 'nav-item' },
+            React.createElement(
+                'h2',
+                null,
+                'Bergenseren'
+            )
+        ),
+        React.createElement(
+            'li',
+            { className: 'nav-item' },
+            React.createElement(
+                'a',
+                { className: 'nav-link active', href: '#' },
+                'V\xE6rvarsel'
+            )
+        )
+    );
+}
+
+var getTemp = function getTemp(val, dayIdx, dataArr) {
+    return val === 'min' ? Math.min.apply(Math, dataArr.map(function (data) {
+        var currentDate = new Date(data.time).getDate();
+        var queriedDate = new Date(dataArr[0].time);
+        if (new Date(queriedDate.setDate(queriedDate.getDate() + dayIdx)).getDate() === currentDate) {
+            return data.data.instant.details.air_temperature;
+        }
+    }).filter(Number)) : Math.max.apply(Math, dataArr.map(function (data) {
+        var currentDate = new Date(data.time).getDate();
+        var queriedDate = new Date(dataArr[0].time);
+        if (new Date(queriedDate.setDate(queriedDate.getDate() + dayIdx)).getDate() === currentDate) {
+            return data.data.instant.details.air_temperature;
+        }
+    }).filter(Number));
+};
 
 var element = React.createElement(App, { city: 'Bergen' });
 

@@ -17,7 +17,7 @@
   display: flex;
   float: right;
   width: 3.5rem;
-  height: 2rem;
+  height: 1.5rem;
   margin: 1rem;
 }
 
@@ -87,7 +87,6 @@ input:checked + .slider:before {
 }
 
 #weather-table {
-  width: 50vw;
   background-color: inherit;
   color: inherit;
 }
