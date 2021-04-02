@@ -17,6 +17,7 @@ var App = function (_React$Component) {
         _this.state = {
             theme: 'light-theme',
             themeChecked: false,
+            currentTemp: '',
             weatherData: ''
         };
         return _this;
@@ -30,7 +31,10 @@ var App = function (_React$Component) {
             fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3913&lon=5.3221').then(function (res) {
                 return res.json();
             }).then(function (json) {
-                return _this2.setState({ weatherData: json.properties.timeseries });
+                return _this2.setState({
+                    currentTemp: json.properties.timeseries[0].data.instant.details.air_temperature,
+                    weatherData: json.properties.timeseries
+                });
             });
         }
     }, {
@@ -53,6 +57,55 @@ var App = function (_React$Component) {
                     'h1',
                     { id: 'title' },
                     'Bergenseren'
+                ),
+                React.createElement(
+                    'table',
+                    { id: 'weather-table', className: 'table table-sm' },
+                    React.createElement(
+                        'thead',
+                        null,
+                        React.createElement(
+                            'tr',
+                            null,
+                            React.createElement(
+                                'th',
+                                null,
+                                React.createElement('i', { 'class': 'fas fa-calendar-day' })
+                            ),
+                            React.createElement(
+                                'th',
+                                null,
+                                React.createElement('i', { className: 'fas fa-thermometer-half' })
+                            ),
+                            React.createElement(
+                                'th',
+                                null,
+                                React.createElement('i', { 'class': 'fas fa-wind' })
+                            ),
+                            React.createElement(
+                                'th',
+                                null,
+                                React.createElement('i', { 'class': 'fas fa-umbrella' })
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        'tr',
+                        null,
+                        React.createElement(
+                            'td',
+                            null,
+                            'Today'
+                        ),
+                        React.createElement(
+                            'td',
+                            null,
+                            this.state.currentTemp,
+                            ' \u2103'
+                        ),
+                        React.createElement('td', null),
+                        React.createElement('td', null)
+                    )
                 )
             );
         }
