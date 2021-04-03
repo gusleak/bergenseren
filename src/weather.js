@@ -4,9 +4,9 @@ class Weather extends React.Component {
         this.state = {
             weatherData: '',
             dates: '',
-            tempToday: '',
-            tempTomorrow: '',
-            tempDayAfter: ''
+            temperature: '',
+            windSpeed: '',
+            precipitation: ''
         };
     }
 
@@ -16,9 +16,13 @@ class Weather extends React.Component {
             .then(json =>
                 this.setState({
                     dates: getDates(json.properties.timeseries[0].time),
-                    tempToday: [getTemp('min', 0, json.properties.timeseries), getTemp('max', 0, json.properties.timeseries)],
-                    tempTomorrow: [getTemp('min', 1, json.properties.timeseries), getTemp('max', 1, json.properties.timeseries)],
-                    tempDayAfter: [getTemp('min', 2, json.properties.timeseries), getTemp('max', 2, json.properties.timeseries)],
+                    temperature: [getTemp('min', 0, json.properties.timeseries), getTemp('max', 0, json.properties.timeseries),
+                                getTemp('min', 1, json.properties.timeseries), getTemp('max', 1, json.properties.timeseries),
+                                getTemp('min', 2, json.properties.timeseries), getTemp('max', 2, json.properties.timeseries)],
+                    windSpeed: [getWind(0, json.properties.timeseries), getWind(1, json.properties.timeseries), getWind(2, json.properties.timeseries)],
+                    precipitation: [getRain(0, json.properties.timeseries), getRain(0, json.properties.timeseries, true),
+                                    getRain(1, json.properties.timeseries), getRain(1, json.properties.timeseries, true),
+                                    getRain(2, json.properties.timeseries), getRain(2, json.properties.timeseries, true)],
                     weatherData: json.properties.timeseries
                 }))
     }
@@ -39,24 +43,25 @@ class Weather extends React.Component {
                     <tbody>
                         <tr>
                             <td>{this.state.dates[0]}</td>
-                            <td>{this.state.tempToday[0]} &#8451; til {this.state.tempToday[1]} &#8451;</td>
-                            <td></td>
-                            <td></td>
+                            <td>{this.state.temperature[0]} &#8451; til {this.state.temperature[1]} &#8451;</td>
+                            <td>opp til {this.state.windSpeed[0]} m/s</td>
+                            <td>{this.state.precipitation[0]} mm kl {this.state.precipitation[1]}</td>
                         </tr>
                         <tr>
                             <td>{this.state.dates[1]}</td>
-                            <td>{this.state.tempTomorrow[0]} &#8451; til {this.state.tempTomorrow[1]} &#8451;</td>
-                            <td></td>
-                            <td></td>
+                            <td>{this.state.temperature[2]} &#8451; til {this.state.temperature[3]} &#8451;</td>
+                            <td>opp til {this.state.windSpeed[1]} m/s</td>
+                            <td>{this.state.precipitation[2]} mm kl {this.state.precipitation[3]}</td>
                         </tr>
                         <tr>
                             <td>{this.state.dates[2]}</td>
-                            <td>{this.state.tempDayAfter[0]} &#8451; til {this.state.tempDayAfter[1]} &#8451;</td>
-                            <td></td>
-                            <td></td>
+                            <td>{this.state.temperature[4]} &#8451; til {this.state.temperature[5]} &#8451;</td>
+                            <td>opp til {this.state.windSpeed[2]} m/s</td>
+                            <td>{this.state.precipitation[4]} mm kl {this.state.precipitation[5]}</td>
                         </tr>
                     </tbody>
                 </table>
+                <small>Med data fra <a href='https://www.yr.no/nb/v%C3%A6rvarsel/daglig-tabell/1-92416/Norge/Vestland/Bergen/Bergen'>yr.no</a>.</small>
             </div>
         );
     }
@@ -88,4 +93,35 @@ const getTemp = (val, dayIdx, dataArr) => {
                 return data.data.instant.details.air_temperature
             }
         }).filter(Number))
+}
+
+const getWind = (dayIdx, dataArr) => {
+    return Math.max.apply(Math, dataArr.map(data => {
+        const currentDate = new Date(data.time).getDate();
+        const queriedDate = new Date(dataArr[0].time);
+        if (new Date(queriedDate.setDate(queriedDate.getDate() + dayIdx)).getDate() === currentDate) {
+            return data.data.instant.details.wind_speed
+        }
+    }).filter(Number))
+}
+
+const getRain = (dayIdx, dataArr, time=false) => {
+    const rainPerHour =  dataArr.map(data => {
+        const currentDate = new Date(data.time).getDate();
+        const queriedDate = new Date(dataArr[0].time);
+        if (new Date(queriedDate.setDate(queriedDate.getDate() + dayIdx)).getDate() === currentDate) {
+            if (data.data.next_1_hours !== undefined) {
+                return [data.data.next_1_hours.details.precipitation_amount, new Date(data.time).getHours()]
+            } else {
+                return undefined
+            }
+        }});
+    let precipitation = [], hours = [];
+    for (let i=0; i < rainPerHour.length; i++) {
+        if (rainPerHour[i] !== undefined) {
+            precipitation.push(rainPerHour[i][0]);
+            hours.push(rainPerHour[i][1]);
+        }
+    }
+    return !time ? Math.max.apply(Math, precipitation) : hours[precipitation.indexOf(Math.max.apply(Math, precipitation))];
 }
