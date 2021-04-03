@@ -18,6 +18,7 @@ var App = function (_React$Component) {
             theme: 'light-theme',
             themeChecked: false,
             weatherData: '',
+            dates: '',
             tempToday: '',
             tempTomorrow: '',
             tempDayAfter: ''
@@ -34,6 +35,7 @@ var App = function (_React$Component) {
                 return res.json();
             }).then(function (json) {
                 return _this2.setState({
+                    dates: getDates(json.properties.timeseries[0].time),
                     tempToday: [getTemp('min', 0, json.properties.timeseries), getTemp('max', 0, json.properties.timeseries)],
                     tempTomorrow: [getTemp('min', 1, json.properties.timeseries), getTemp('max', 1, json.properties.timeseries)],
                     tempDayAfter: [getTemp('min', 2, json.properties.timeseries), getTemp('max', 2, json.properties.timeseries)],
@@ -60,7 +62,7 @@ var App = function (_React$Component) {
                 React.createElement(NavBar, null),
                 React.createElement(
                     'table',
-                    { id: 'weather-table', className: 'table' },
+                    { id: 'weather-table', className: 'table table-borderless' },
                     React.createElement(
                         'thead',
                         null,
@@ -98,7 +100,7 @@ var App = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                'Today'
+                                this.state.dates[0]
                             ),
                             React.createElement(
                                 'td',
@@ -117,7 +119,7 @@ var App = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                'Tomorrow'
+                                this.state.dates[1]
                             ),
                             React.createElement(
                                 'td',
@@ -136,7 +138,7 @@ var App = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                'Day After'
+                                this.state.dates[2]
                             ),
                             React.createElement(
                                 'td',
@@ -182,6 +184,16 @@ function NavBar() {
         )
     );
 }
+
+var getDates = function getDates(isoDate) {
+    var today = new Date(isoDate);
+    var tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    var dayAfter = new Date();
+    dayAfter.setDate(today.getDate() + 2);
+    var settings = { weekday: 'long', day: 'numeric', month: 'long' };
+    return [today.toLocaleDateString('no', settings), tomorrow.toLocaleDateString('no', settings), dayAfter.toLocaleDateString('no', settings)];
+};
 
 var getTemp = function getTemp(val, dayIdx, dataArr) {
     return val === 'min' ? Math.min.apply(Math, dataArr.map(function (data) {
