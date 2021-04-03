@@ -5,6 +5,7 @@ class App extends React.Component {
             theme: 'light-theme',
             themeChecked: false,
             weatherData: '',
+            dates: '',
             tempToday: '',
             tempTomorrow: '',
             tempDayAfter: ''
@@ -16,6 +17,7 @@ class App extends React.Component {
             .then(res => res.json())
             .then(json => 
                 this.setState({
+                    dates: getDates(json.properties.timeseries[0].time),
                     tempToday: [getTemp('min', 0, json.properties.timeseries), getTemp('max', 0, json.properties.timeseries)],
                     tempTomorrow: [getTemp('min', 1, json.properties.timeseries), getTemp('max', 1, json.properties.timeseries)],
                     tempDayAfter: [getTemp('min', 2, json.properties.timeseries), getTemp('max', 2, json.properties.timeseries)],
@@ -35,7 +37,7 @@ class App extends React.Component {
                     <span className='slider round'></span>
                 </div>
                 <NavBar />
-                <table id='weather-table' className='table'>
+                <table id='weather-table' className='table table-borderless'>
                     <thead>
                         <tr>
                             <th><i className="fas fa-calendar-day"></i></th>
@@ -46,19 +48,19 @@ class App extends React.Component {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Today</td>
+                            <td>{this.state.dates[0]}</td>
                             <td>{this.state.tempToday[0]} &#8451; til {this.state.tempToday[1]} &#8451;</td>
                             <td></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Tomorrow</td>
+                            <td>{this.state.dates[1]}</td>
                             <td>{this.state.tempTomorrow[0]} &#8451; til {this.state.tempTomorrow[1]} &#8451;</td>
                             <td></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td>Day After</td>
+                            <td>{this.state.dates[2]}</td>
                             <td>{this.state.tempDayAfter[0]} &#8451; til {this.state.tempDayAfter[1]} &#8451;</td>
                             <td></td>
                             <td></td>
@@ -81,6 +83,16 @@ function NavBar() {
             </li>
         </ul>
     );
+}
+
+const getDates = (isoDate) => {
+    const today = new Date(isoDate);
+    let tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
+    let dayAfter = new Date();
+    dayAfter.setDate(today.getDate() + 2);
+    const settings = { weekday:'long', day: 'numeric', month: 'long' }
+    return [today.toLocaleDateString('no', settings), tomorrow.toLocaleDateString('no', settings), dayAfter.toLocaleDateString('no', settings)];
 }
 
 const getTemp = (val, dayIdx, dataArr) => {
