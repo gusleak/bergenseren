@@ -16,37 +16,15 @@ var App = function (_React$Component) {
 
         _this.state = {
             theme: 'light-theme',
-            themeChecked: false,
-            weatherData: '',
-            dates: '',
-            tempToday: '',
-            tempTomorrow: '',
-            tempDayAfter: ''
+            themeChecked: false
         };
         return _this;
     }
 
     _createClass(App, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var _this2 = this;
-
-            fetch('https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=60.3913&lon=5.3221').then(function (res) {
-                return res.json();
-            }).then(function (json) {
-                return _this2.setState({
-                    dates: getDates(json.properties.timeseries[0].time),
-                    tempToday: [getTemp('min', 0, json.properties.timeseries), getTemp('max', 0, json.properties.timeseries)],
-                    tempTomorrow: [getTemp('min', 1, json.properties.timeseries), getTemp('max', 1, json.properties.timeseries)],
-                    tempDayAfter: [getTemp('min', 2, json.properties.timeseries), getTemp('max', 2, json.properties.timeseries)],
-                    weatherData: json.properties.timeseries
-                });
-            });
-        }
-    }, {
         key: 'render',
         value: function render() {
-            var _this3 = this;
+            var _this2 = this;
 
             return React.createElement(
                 'div',
@@ -54,105 +32,13 @@ var App = function (_React$Component) {
                 React.createElement(
                     'div',
                     { id: 'theme-switch', className: 'switch', onClick: function onClick() {
-                            _this3.state.theme === 'light-theme' ? _this3.setState({ theme: 'dark-theme', themeChecked: true }) : _this3.setState({ theme: 'light-theme', themeChecked: false });
+                            _this2.state.theme === 'light-theme' ? _this2.setState({ theme: 'dark-theme', themeChecked: true }) : _this2.setState({ theme: 'light-theme', themeChecked: false });
                         } },
                     React.createElement('input', { type: 'checkbox', id: 'slider', checked: this.state.themeChecked, readOnly: true }),
                     React.createElement('span', { className: 'slider round' })
                 ),
                 React.createElement(NavBar, null),
-                React.createElement(
-                    'table',
-                    { id: 'weather-table', className: 'table table-borderless' },
-                    React.createElement(
-                        'thead',
-                        null,
-                        React.createElement(
-                            'tr',
-                            null,
-                            React.createElement(
-                                'th',
-                                null,
-                                React.createElement('i', { className: 'fas fa-calendar-day' })
-                            ),
-                            React.createElement(
-                                'th',
-                                null,
-                                React.createElement('i', { className: 'fas fa-thermometer-half' })
-                            ),
-                            React.createElement(
-                                'th',
-                                null,
-                                React.createElement('i', { className: 'fas fa-wind' })
-                            ),
-                            React.createElement(
-                                'th',
-                                null,
-                                React.createElement('i', { className: 'fas fa-umbrella' })
-                            )
-                        )
-                    ),
-                    React.createElement(
-                        'tbody',
-                        null,
-                        React.createElement(
-                            'tr',
-                            null,
-                            React.createElement(
-                                'td',
-                                null,
-                                this.state.dates[0]
-                            ),
-                            React.createElement(
-                                'td',
-                                null,
-                                this.state.tempToday[0],
-                                ' \u2103 til ',
-                                this.state.tempToday[1],
-                                ' \u2103'
-                            ),
-                            React.createElement('td', null),
-                            React.createElement('td', null)
-                        ),
-                        React.createElement(
-                            'tr',
-                            null,
-                            React.createElement(
-                                'td',
-                                null,
-                                this.state.dates[1]
-                            ),
-                            React.createElement(
-                                'td',
-                                null,
-                                this.state.tempTomorrow[0],
-                                ' \u2103 til ',
-                                this.state.tempTomorrow[1],
-                                ' \u2103'
-                            ),
-                            React.createElement('td', null),
-                            React.createElement('td', null)
-                        ),
-                        React.createElement(
-                            'tr',
-                            null,
-                            React.createElement(
-                                'td',
-                                null,
-                                this.state.dates[2]
-                            ),
-                            React.createElement(
-                                'td',
-                                null,
-                                this.state.tempDayAfter[0],
-                                ' \u2103 til ',
-                                this.state.tempDayAfter[1],
-                                ' \u2103'
-                            ),
-                            React.createElement('td', null),
-                            React.createElement('td', null)
-                        )
-                    )
-                )
+                React.createElement(Weather, null)
             );
         }
     }]);
@@ -184,32 +70,6 @@ function NavBar() {
         )
     );
 }
-
-var getDates = function getDates(isoDate) {
-    var today = new Date(isoDate);
-    var tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1);
-    var dayAfter = new Date();
-    dayAfter.setDate(today.getDate() + 2);
-    var settings = { weekday: 'long', day: 'numeric', month: 'long' };
-    return [today.toLocaleDateString('no', settings), tomorrow.toLocaleDateString('no', settings), dayAfter.toLocaleDateString('no', settings)];
-};
-
-var getTemp = function getTemp(val, dayIdx, dataArr) {
-    return val === 'min' ? Math.min.apply(Math, dataArr.map(function (data) {
-        var currentDate = new Date(data.time).getDate();
-        var queriedDate = new Date(dataArr[0].time);
-        if (new Date(queriedDate.setDate(queriedDate.getDate() + dayIdx)).getDate() === currentDate) {
-            return data.data.instant.details.air_temperature;
-        }
-    }).filter(Number)) : Math.max.apply(Math, dataArr.map(function (data) {
-        var currentDate = new Date(data.time).getDate();
-        var queriedDate = new Date(dataArr[0].time);
-        if (new Date(queriedDate.setDate(queriedDate.getDate() + dayIdx)).getDate() === currentDate) {
-            return data.data.instant.details.air_temperature;
-        }
-    }).filter(Number));
-};
 
 var element = React.createElement(App, { city: 'Bergen' });
 
