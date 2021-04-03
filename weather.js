@@ -17,9 +17,9 @@ var Weather = function (_React$Component) {
         _this.state = {
             weatherData: '',
             dates: '',
-            tempToday: '',
-            tempTomorrow: '',
-            tempDayAfter: ''
+            temperature: '',
+            windSpeed: '',
+            precipitation: ''
         };
         return _this;
     }
@@ -34,9 +34,9 @@ var Weather = function (_React$Component) {
             }).then(function (json) {
                 return _this2.setState({
                     dates: getDates(json.properties.timeseries[0].time),
-                    tempToday: [getTemp('min', 0, json.properties.timeseries), getTemp('max', 0, json.properties.timeseries)],
-                    tempTomorrow: [getTemp('min', 1, json.properties.timeseries), getTemp('max', 1, json.properties.timeseries)],
-                    tempDayAfter: [getTemp('min', 2, json.properties.timeseries), getTemp('max', 2, json.properties.timeseries)],
+                    temperature: [getTemp('min', 0, json.properties.timeseries), getTemp('max', 0, json.properties.timeseries), getTemp('min', 1, json.properties.timeseries), getTemp('max', 1, json.properties.timeseries), getTemp('min', 2, json.properties.timeseries), getTemp('max', 2, json.properties.timeseries)],
+                    windSpeed: [getWind(0, json.properties.timeseries), getWind(1, json.properties.timeseries), getWind(2, json.properties.timeseries)],
+                    precipitation: [getRain(0, json.properties.timeseries), getRain(0, json.properties.timeseries, true), getRain(1, json.properties.timeseries), getRain(1, json.properties.timeseries, true), getRain(2, json.properties.timeseries), getRain(2, json.properties.timeseries, true)],
                     weatherData: json.properties.timeseries
                 });
             });
@@ -93,13 +93,25 @@ var Weather = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.tempToday[0],
+                                this.state.temperature[0],
                                 ' \u2103 til ',
-                                this.state.tempToday[1],
+                                this.state.temperature[1],
                                 ' \u2103'
                             ),
-                            React.createElement('td', null),
-                            React.createElement('td', null)
+                            React.createElement(
+                                'td',
+                                null,
+                                'opp til ',
+                                this.state.windSpeed[0],
+                                ' m/s'
+                            ),
+                            React.createElement(
+                                'td',
+                                null,
+                                this.state.precipitation[0],
+                                ' mm kl ',
+                                this.state.precipitation[1]
+                            )
                         ),
                         React.createElement(
                             'tr',
@@ -112,13 +124,25 @@ var Weather = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.tempTomorrow[0],
+                                this.state.temperature[2],
                                 ' \u2103 til ',
-                                this.state.tempTomorrow[1],
+                                this.state.temperature[3],
                                 ' \u2103'
                             ),
-                            React.createElement('td', null),
-                            React.createElement('td', null)
+                            React.createElement(
+                                'td',
+                                null,
+                                'opp til ',
+                                this.state.windSpeed[1],
+                                ' m/s'
+                            ),
+                            React.createElement(
+                                'td',
+                                null,
+                                this.state.precipitation[2],
+                                ' mm kl ',
+                                this.state.precipitation[3]
+                            )
                         ),
                         React.createElement(
                             'tr',
@@ -131,15 +155,38 @@ var Weather = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.tempDayAfter[0],
+                                this.state.temperature[4],
                                 ' \u2103 til ',
-                                this.state.tempDayAfter[1],
+                                this.state.temperature[5],
                                 ' \u2103'
                             ),
-                            React.createElement('td', null),
-                            React.createElement('td', null)
+                            React.createElement(
+                                'td',
+                                null,
+                                'opp til ',
+                                this.state.windSpeed[2],
+                                ' m/s'
+                            ),
+                            React.createElement(
+                                'td',
+                                null,
+                                this.state.precipitation[4],
+                                ' mm kl ',
+                                this.state.precipitation[5]
+                            )
                         )
                     )
+                ),
+                React.createElement(
+                    'small',
+                    null,
+                    'Med data fra ',
+                    React.createElement(
+                        'a',
+                        { href: 'https://www.yr.no/nb/v%C3%A6rvarsel/daglig-tabell/1-92416/Norge/Vestland/Bergen/Bergen' },
+                        'yr.no'
+                    ),
+                    '.'
                 )
             );
         }
@@ -172,4 +219,39 @@ var getTemp = function getTemp(val, dayIdx, dataArr) {
             return data.data.instant.details.air_temperature;
         }
     }).filter(Number));
+};
+
+var getWind = function getWind(dayIdx, dataArr) {
+    return Math.max.apply(Math, dataArr.map(function (data) {
+        var currentDate = new Date(data.time).getDate();
+        var queriedDate = new Date(dataArr[0].time);
+        if (new Date(queriedDate.setDate(queriedDate.getDate() + dayIdx)).getDate() === currentDate) {
+            return data.data.instant.details.wind_speed;
+        }
+    }).filter(Number));
+};
+
+var getRain = function getRain(dayIdx, dataArr) {
+    var time = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+    var rainPerHour = dataArr.map(function (data) {
+        var currentDate = new Date(data.time).getDate();
+        var queriedDate = new Date(dataArr[0].time);
+        if (new Date(queriedDate.setDate(queriedDate.getDate() + dayIdx)).getDate() === currentDate) {
+            if (data.data.next_1_hours !== undefined) {
+                return [data.data.next_1_hours.details.precipitation_amount, new Date(data.time).getHours()];
+            } else {
+                return undefined;
+            }
+        }
+    });
+    var precipitation = [],
+        hours = [];
+    for (var i = 0; i < rainPerHour.length; i++) {
+        if (rainPerHour[i] !== undefined) {
+            precipitation.push(rainPerHour[i][0]);
+            hours.push(rainPerHour[i][1]);
+        }
+    }
+    return !time ? Math.max.apply(Math, precipitation) : hours[precipitation.indexOf(Math.max.apply(Math, precipitation))];
 };
