@@ -47,7 +47,7 @@ var Weather = function (_React$Component) {
 
             return React.createElement(
                 'div',
-                null,
+                { className: this.props.theme === 'light' ? 'container border shadow-sm p-5 mb-5 rounded' : 'container border border-dark shadow-sm p-5 mb-5 rounded' },
                 React.createElement(
                     'table',
                     { id: 'weather-table', className: 'table table-borderless' },
@@ -93,22 +93,38 @@ var Weather = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.temperature[0],
+                                React.createElement(
+                                    'span',
+                                    { className: 'temp-degree' },
+                                    this.state.temperature[0]
+                                ),
                                 ' \u2103 til ',
-                                this.state.temperature[1],
+                                React.createElement(
+                                    'span',
+                                    { className: 'temp-degree' },
+                                    this.state.temperature[1]
+                                ),
                                 ' \u2103'
                             ),
                             React.createElement(
                                 'td',
                                 null,
                                 'opp til ',
-                                this.state.windSpeed[0],
+                                React.createElement(
+                                    'span',
+                                    { className: 'wind-degree' },
+                                    this.state.windSpeed[0]
+                                ),
                                 ' m/s'
                             ),
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.precipitation[0],
+                                React.createElement(
+                                    'span',
+                                    { className: 'prep-degree' },
+                                    this.state.precipitation[0]
+                                ),
                                 ' mm kl ',
                                 this.state.precipitation[1]
                             )
@@ -124,22 +140,38 @@ var Weather = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.temperature[2],
+                                React.createElement(
+                                    'span',
+                                    { className: 'temp-degree' },
+                                    this.state.temperature[2]
+                                ),
                                 ' \u2103 til ',
-                                this.state.temperature[3],
+                                React.createElement(
+                                    'span',
+                                    { className: 'temp-degree' },
+                                    this.state.temperature[3]
+                                ),
                                 ' \u2103'
                             ),
                             React.createElement(
                                 'td',
                                 null,
                                 'opp til ',
-                                this.state.windSpeed[1],
+                                React.createElement(
+                                    'span',
+                                    { className: 'wind-degree' },
+                                    this.state.windSpeed[1]
+                                ),
                                 ' m/s'
                             ),
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.precipitation[2],
+                                React.createElement(
+                                    'span',
+                                    { className: 'prep-degree' },
+                                    this.state.precipitation[2]
+                                ),
                                 ' mm kl ',
                                 this.state.precipitation[3]
                             )
@@ -155,22 +187,38 @@ var Weather = function (_React$Component) {
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.temperature[4],
+                                React.createElement(
+                                    'span',
+                                    { className: 'temp-degree' },
+                                    this.state.temperature[4]
+                                ),
                                 ' \u2103 til ',
-                                this.state.temperature[5],
+                                React.createElement(
+                                    'span',
+                                    { className: 'temp-degree' },
+                                    this.state.temperature[5]
+                                ),
                                 ' \u2103'
                             ),
                             React.createElement(
                                 'td',
                                 null,
                                 'opp til ',
-                                this.state.windSpeed[2],
+                                React.createElement(
+                                    'span',
+                                    { className: 'wind-degree' },
+                                    this.state.windSpeed[2]
+                                ),
                                 ' m/s'
                             ),
                             React.createElement(
                                 'td',
                                 null,
-                                this.state.precipitation[4],
+                                React.createElement(
+                                    'span',
+                                    { className: 'prep-degree' },
+                                    this.state.precipitation[4]
+                                ),
                                 ' mm kl ',
                                 this.state.precipitation[5]
                             )

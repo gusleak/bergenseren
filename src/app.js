@@ -18,23 +18,25 @@ class App extends React.Component {
                     <input type='checkbox' id='slider' checked={this.state.themeChecked} readOnly></input>
                     <span className='slider round'></span>
                 </div>
-                <NavBar />
-                <Weather />
+                <NavBar theme={this.state.theme === 'light-theme' ? 'light' : 'dark'} />
+                <Weather theme={this.state.theme === 'light-theme' ? 'light' : 'dark'} />
             </div>
         );
     }
 }
 
-function NavBar() {
+function NavBar(props) {
     return (
-        <ul className='nav justify-content-center'>
-            <li className='nav-item'>
-                <h2>Bergenseren</h2>
-            </li>
-            <li className='nav-item'>
-                <a className='nav-link active' href='#'>Værvarsel</a>
-            </li>
-        </ul>
+        <div id='navbar' className={props.theme === 'light' ? 'border shadow-sm p-3 mb-5 rounded' : 'border border-dark shadow-sm p-3 mb-5 rounded'}>
+            <ul className='nav justify-content-center'>
+                <li className='nav-item'>
+                    <h2>Bergenseren</h2>
+                </li>
+                <li className='nav-item'>
+                    <a className='nav-link active' href='#'>Værvarsel</a>
+                </li>
+            </ul>
+        </div>
     );
 }
 

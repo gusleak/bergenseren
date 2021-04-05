@@ -82,6 +82,11 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
+#navbar {
+  background-color: inherit;
+  color: inherit;
+}
+
 #title {
   padding: 1rem;
 }
@@ -93,4 +98,8 @@ input:checked + .slider:before {
 
 th {
   font-size: 2rem;
+}
+
+.temp-degree, .wind-degree, .prep-degree {
+  font-size: larger;
 }
