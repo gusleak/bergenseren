@@ -37,8 +37,8 @@ var App = function (_React$Component) {
                     React.createElement('input', { type: 'checkbox', id: 'slider', checked: this.state.themeChecked, readOnly: true }),
                     React.createElement('span', { className: 'slider round' })
                 ),
-                React.createElement(NavBar, null),
-                React.createElement(Weather, null)
+                React.createElement(NavBar, { theme: this.state.theme === 'light-theme' ? 'light' : 'dark' }),
+                React.createElement(Weather, { theme: this.state.theme === 'light-theme' ? 'light' : 'dark' })
             );
         }
     }]);
@@ -46,26 +46,30 @@ var App = function (_React$Component) {
     return App;
 }(React.Component);
 
-function NavBar() {
+function NavBar(props) {
     return React.createElement(
-        'ul',
-        { className: 'nav justify-content-center' },
+        'div',
+        { id: 'navbar', className: props.theme === 'light' ? 'border shadow-sm p-3 mb-5 rounded' : 'border border-dark shadow-sm p-3 mb-5 rounded' },
         React.createElement(
-            'li',
-            { className: 'nav-item' },
+            'ul',
+            { className: 'nav justify-content-center' },
             React.createElement(
-                'h2',
-                null,
-                'Bergenseren'
-            )
-        ),
-        React.createElement(
-            'li',
-            { className: 'nav-item' },
+                'li',
+                { className: 'nav-item' },
+                React.createElement(
+                    'h2',
+                    null,
+                    'Bergenseren'
+                )
+            ),
             React.createElement(
-                'a',
-                { className: 'nav-link active', href: '#' },
-                'V\xE6rvarsel'
+                'li',
+                { className: 'nav-item' },
+                React.createElement(
+                    'a',
+                    { className: 'nav-link active', href: '#' },
+                    'V\xE6rvarsel'
+                )
             )
         )
     );

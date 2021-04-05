@@ -30,7 +30,7 @@ class Weather extends React.Component {
     render() {
 
         return (
-            <div>
+            <div className={this.props.theme === 'light' ? 'container border shadow-sm p-5 mb-5 rounded' : 'container border border-dark shadow-sm p-5 mb-5 rounded'}>
                 <table id='weather-table' className='table table-borderless'>
                     <thead>
                         <tr>
@@ -43,21 +43,21 @@ class Weather extends React.Component {
                     <tbody>
                         <tr>
                             <td>{this.state.dates[0]}</td>
-                            <td>{this.state.temperature[0]} &#8451; til {this.state.temperature[1]} &#8451;</td>
-                            <td>opp til {this.state.windSpeed[0]} m/s</td>
-                            <td>{this.state.precipitation[0]} mm kl {this.state.precipitation[1]}</td>
+                            <td><span className='temp-degree'>{this.state.temperature[0]}</span> &#8451; til <span className='temp-degree'>{this.state.temperature[1]}</span> &#8451;</td>
+                            <td>opp til <span className='wind-degree'>{this.state.windSpeed[0]}</span> m/s</td>
+                            <td><span className='prep-degree'>{this.state.precipitation[0]}</span> mm kl {this.state.precipitation[1]}</td>
                         </tr>
                         <tr>
                             <td>{this.state.dates[1]}</td>
-                            <td>{this.state.temperature[2]} &#8451; til {this.state.temperature[3]} &#8451;</td>
-                            <td>opp til {this.state.windSpeed[1]} m/s</td>
-                            <td>{this.state.precipitation[2]} mm kl {this.state.precipitation[3]}</td>
+                            <td><span className='temp-degree'>{this.state.temperature[2]}</span> &#8451; til <span className='temp-degree'>{this.state.temperature[3]}</span> &#8451;</td>
+                            <td>opp til <span className='wind-degree'>{this.state.windSpeed[1]}</span> m/s</td>
+                            <td><span className='prep-degree'>{this.state.precipitation[2]}</span> mm kl {this.state.precipitation[3]}</td>
                         </tr>
                         <tr>
                             <td>{this.state.dates[2]}</td>
-                            <td>{this.state.temperature[4]} &#8451; til {this.state.temperature[5]} &#8451;</td>
-                            <td>opp til {this.state.windSpeed[2]} m/s</td>
-                            <td>{this.state.precipitation[4]} mm kl {this.state.precipitation[5]}</td>
+                            <td><span className='temp-degree'>{this.state.temperature[4]}</span> &#8451; til <span className='temp-degree'>{this.state.temperature[5]}</span> &#8451;</td>
+                            <td>opp til <span className='wind-degree'>{this.state.windSpeed[2]}</span> m/s</td>
+                            <td><span className='prep-degree'>{this.state.precipitation[4]}</span> mm kl {this.state.precipitation[5]}</td>
                         </tr>
                     </tbody>
                 </table>
